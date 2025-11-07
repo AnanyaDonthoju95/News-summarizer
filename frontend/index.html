@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>News Summarizer</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Arial, sans-serif;
+      background: linear-gradient(120deg,#f8fafc,#dbeafe 70%);
+      min-height: 100vh;
+      margin: 0;
+      padding: 0;
+    }
+    .container {
+      max-width: 520px;
+      margin: 70px auto 0;
+      background: #fff;
+      border-radius: 20px;
+      box-shadow: 0 6px 32px 0 rgba(0,30,90,.08);
+      padding: 2.5em 2em 2em 2em;
+      display: flex;
+      flex-direction: column;
+      align-items: stretch;
+    }
+    h1 {
+      color: #2563eb;
+      font-size: 2rem;
+      text-align: center;
+      margin-bottom: 1.4em;
+    }
+    #url {
+      padding: 12px 14px;
+      font-size: 1.08em;
+      border: 1px solid #d1d5db;
+      border-radius: 8px;
+      transition: border .2s;
+      outline: none;
+      width: 100%;
+      margin-bottom: 1.5em;
+      box-sizing: border-box;
+    }
+    #url:focus {
+      border-color: #2563eb;
+    }
+    button {
+      padding: 11px 0;
+      font-size: 1.05em;
+      background: #2563eb;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      margin-bottom: 1.6em;
+      font-weight: 600;
+      letter-spacing: .05em;
+      cursor: pointer;
+      transition: background .2s;
+    }
+    button:hover {
+      background: #1e40af;
+    }
+    #summary {
+      color: #22223b;
+      font-size: 1.08em;
+      background: #f1f5f9;
+      border-radius: 7px;
+      min-height: 80px;
+      padding: 1.1em 1em .85em 1em;
+      line-height: 1.45;
+      border: 1px solid #e0e7ef;
+      box-shadow: 0 1px 6px 0 rgba(30,60,200,.04);
+      white-space: pre-line;
+    }
+    @media (max-width:600px) {
+      .container {
+        margin-top: 25px;
+        border-radius: 10px;
+        padding: 1.2em 0.5em 1.3em 0.5em;
+      }
+      h1 { font-size: 1.2rem; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Serverless News Summarizer</h1>
+    <input id="url" type="text" placeholder="Paste article URL here..." />
+    <button onclick="summarize()">Summarize</button>
+    <div id="summary"></div>
+  </div>
+  <script>
+    function summarize() {
+      const url = document.getElementById('url').value;
+      document.getElementById('summary').innerText = 'Loading...';
+      fetch('https://92588piw58.execute-api.ap-south-1.amazonaws.com/prod/summarize', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({ url })
+      })
+      .then(resp => resp.json())
+      .then(data => {
+        let text = data.summary || data.body || JSON.stringify(data);
+        document.getElementById('summary').innerText = text;
+      })
+      .catch(e => {
+        document.getElementById('summary').innerText = 'Error: ' + e;
+      });
+    }
+  </script>
+</body>
+</html>
